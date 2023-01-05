@@ -17,6 +17,18 @@ struct ReadingsFeature: ReducerProtocol {
         var loading = false
         var errorMessage: String?
         var connectionCount = 0
+
+        var searchText = ""
+        var searchResults: [ReadingModel] {
+            if searchText.isEmpty {
+                return readings
+            } else {
+                return readings.filter {
+                    $0.device.lowercased().contains(searchText.lowercased()) ||
+                    $0.name.lowercased().contains(searchText.lowercased())
+                }
+            }
+        }
     }
 
     enum Action: Equatable {
@@ -24,6 +36,7 @@ struct ReadingsFeature: ReducerProtocol {
         case reload
         case errorReceived(String)
         case dismantle
+        case searchTextChanged(String)
     }
 
     @Dependency(\.readingsProvider) var readingsProvider
@@ -33,6 +46,9 @@ struct ReadingsFeature: ReducerProtocol {
 
     func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
+        case .searchTextChanged(let searchString):
+            state.searchText = searchString
+            return .none
         case .readingsFetched(let newReadings):
             state.loading = false
             state.errorMessage = nil

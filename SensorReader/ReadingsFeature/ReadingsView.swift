@@ -10,12 +10,13 @@ import SwiftUI
 
 struct ReadingsView: View {
     let store: StoreOf<ComposedFeature>
+    @State private var searchText = ""
 
     var body: some View {
         WithViewStore(store) { viewStore in
             ZStack {
                 List {
-                    ForEach(viewStore.readings.readings) { reading in
+                    ForEach(viewStore.readings.searchResults) { reading in
                         ReadingsListItem(reading: reading,
                                          store: store.scope(state: \.favorites,
                                                             action: ComposedFeature.Action.favorites))
@@ -49,6 +50,11 @@ struct ReadingsView: View {
 
             }
             .navigationTitle("List")
+            .searchable(text: viewStore.binding(get: { state in
+                state.readings.searchText
+            }, send: { value in
+                ComposedFeature.Action.readings(.searchTextChanged(value))
+            }))
         }
     }
 }
