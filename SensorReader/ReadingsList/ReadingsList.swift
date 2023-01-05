@@ -21,16 +21,7 @@ struct ReadingsList: View {
         ZStack {
             List {
                 ForEach(viewModel.readings) { reading in
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(reading.name)
-                            Text(reading.device).font(.caption)
-                        }
-                        Spacer()
-                        Text(reading.value)
-                            .font(.callout)
-                    } 
-                    .padding([.top, .bottom])
+                    ReadingsListCell(reading: reading)
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         Button {
                             viewModel.toggleFavorite(reading)

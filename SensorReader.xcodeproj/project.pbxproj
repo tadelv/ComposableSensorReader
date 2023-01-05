@@ -29,6 +29,11 @@
 		1837EC09294461850045CC4E /* FavoritesUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1837EC08294461850045CC4E /* FavoritesUseCaseTests.swift */; };
 		1837EC0B294465670045CC4E /* MockPersistenceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1837EC0A294465670045CC4E /* MockPersistenceStore.swift */; };
 		1837EC0D2945C1170045CC4E /* FavoritesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1837EC0C2945C1170045CC4E /* FavoritesUseCase.swift */; };
+		1865AC97295F7522004BF767 /* ReadingsListcell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1865AC96295F7522004BF767 /* ReadingsListcell.swift */; };
+		1865AC9A296578B7004BF767 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 1865AC99296578B7004BF767 /* ComposableArchitecture */; };
+		1865AC9C296579D3004BF767 /* ReadingsFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1865AC9B296579D3004BF767 /* ReadingsFeature.swift */; };
+		1865AC9E29658791004BF767 /* ReadingsFeatureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1865AC9D29658791004BF767 /* ReadingsFeatureTests.swift */; };
+		1865ACA12966CC2E004BF767 /* ReadingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1865ACA02966CC2E004BF767 /* ReadingsView.swift */; };
 		186C774F29473FA00076AE14 /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186C774E29473FA00076AE14 /* Recorder.swift */; };
 		187F4C91294259AC00F585B1 /* ReadingProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187F4C90294259AC00F585B1 /* ReadingProviding.swift */; };
 		187F4C9429425E3D00F585B1 /* ReadingsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187F4C9329425E3D00F585B1 /* ReadingsListViewModel.swift */; };
@@ -36,6 +41,7 @@
 		18C1F8C529424B2300ACCF4B /* ReadingsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C1F8C429424B2300ACCF4B /* ReadingsUseCaseTests.swift */; };
 		18C1F8C829424B5200ACCF4B /* MockSensorReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C1F8C729424B5200ACCF4B /* MockSensorReader.swift */; };
 		18CD7F69295D871500DEE5E8 /* UserDefaultsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CD7F68295D871500DEE5E8 /* UserDefaultsStore.swift */; };
+		18CD7F6B295DFBA400DEE5E8 /* ReadingModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CD7F6A295DFBA400DEE5E8 /* ReadingModelTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,6 +113,10 @@
 		1837EC08294461850045CC4E /* FavoritesUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesUseCaseTests.swift; sourceTree = "<group>"; };
 		1837EC0A294465670045CC4E /* MockPersistenceStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPersistenceStore.swift; sourceTree = "<group>"; };
 		1837EC0C2945C1170045CC4E /* FavoritesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesUseCase.swift; sourceTree = "<group>"; };
+		1865AC96295F7522004BF767 /* ReadingsListcell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingsListcell.swift; sourceTree = "<group>"; };
+		1865AC9B296579D3004BF767 /* ReadingsFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingsFeature.swift; sourceTree = "<group>"; };
+		1865AC9D29658791004BF767 /* ReadingsFeatureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingsFeatureTests.swift; sourceTree = "<group>"; };
+		1865ACA02966CC2E004BF767 /* ReadingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingsView.swift; sourceTree = "<group>"; };
 		186C774E29473FA00076AE14 /* Recorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
 		187F4C90294259AC00F585B1 /* ReadingProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingProviding.swift; sourceTree = "<group>"; };
 		187F4C9329425E3D00F585B1 /* ReadingsListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingsListViewModel.swift; sourceTree = "<group>"; };
@@ -115,6 +125,7 @@
 		18C1F8C429424B2300ACCF4B /* ReadingsUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingsUseCaseTests.swift; sourceTree = "<group>"; };
 		18C1F8C729424B5200ACCF4B /* MockSensorReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSensorReader.swift; sourceTree = "<group>"; };
 		18CD7F68295D871500DEE5E8 /* UserDefaultsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsStore.swift; sourceTree = "<group>"; };
+		18CD7F6A295DFBA400DEE5E8 /* ReadingModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingModelTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +133,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1865AC9A296578B7004BF767 /* ComposableArchitecture in Frameworks */,
 				18206F1B293CC17700ED1420 /* SensorReaderKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -176,6 +188,7 @@
 		18206EF1293CC13A00ED1420 /* SensorReader */ = {
 			isa = PBXGroup;
 			children = (
+				1865AC9F2966CC1A004BF767 /* ReadingsFeature */,
 				1837EC032943A3370045CC4E /* FavoritesStore */,
 				18206EF6293CC13B00ED1420 /* Assets.xcassets */,
 				1837EBFC29436B920045CC4E /* Common */,
@@ -246,10 +259,20 @@
 			path = FavoritesStore;
 			sourceTree = "<group>";
 		};
+		1865AC9F2966CC1A004BF767 /* ReadingsFeature */ = {
+			isa = PBXGroup;
+			children = (
+				1865AC9B296579D3004BF767 /* ReadingsFeature.swift */,
+				1865ACA02966CC2E004BF767 /* ReadingsView.swift */,
+			);
+			path = ReadingsFeature;
+			sourceTree = "<group>";
+		};
 		187F4C9229425E1E00F585B1 /* ReadingsList */ = {
 			isa = PBXGroup;
 			children = (
 				18206F2A293CF59600ED1420 /* ReadingsList.swift */,
+				1865AC96295F7522004BF767 /* ReadingsListcell.swift */,
 				187F4C9329425E3D00F585B1 /* ReadingsListViewModel.swift */,
 			);
 			path = ReadingsList;
@@ -268,6 +291,8 @@
 			isa = PBXGroup;
 			children = (
 				18C1F8C429424B2300ACCF4B /* ReadingsUseCaseTests.swift */,
+				1865AC9D29658791004BF767 /* ReadingsFeatureTests.swift */,
+				18CD7F6A295DFBA400DEE5E8 /* ReadingModelTests.swift */,
 				1837EC08294461850045CC4E /* FavoritesUseCaseTests.swift */,
 				18C1F8C629424B4000ACCF4B /* Utilities */,
 			);
@@ -313,6 +338,9 @@
 				18206F1A293CC17700ED1420 /* PBXTargetDependency */,
 			);
 			name = SensorReader;
+			packageProductDependencies = (
+				1865AC99296578B7004BF767 /* ComposableArchitecture */,
+			);
 			productName = SensorReader;
 			productReference = 18206EEF293CC13A00ED1420 /* SensorReader.app */;
 			productType = "com.apple.product-type.application";
@@ -407,6 +435,9 @@
 				Base,
 			);
 			mainGroup = 18206EE6293CC13A00ED1420;
+			packageReferences = (
+				1865AC98296578B7004BF767 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
+			);
 			productRefGroup = 18206EF0293CC13A00ED1420 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -464,13 +495,16 @@
 				18206F2D293D15F500ED1420 /* HomeView.swift in Sources */,
 				187F4C91294259AC00F585B1 /* ReadingProviding.swift in Sources */,
 				1837EC0D2945C1170045CC4E /* FavoritesUseCase.swift in Sources */,
+				1865AC9C296579D3004BF767 /* ReadingsFeature.swift in Sources */,
 				187F4C9429425E3D00F585B1 /* ReadingsListViewModel.swift in Sources */,
 				18C1F8B62942420400ACCF4B /* ReadingsUseCase.swift in Sources */,
 				18206F2F293D1E7200ED1420 /* DashboardView.swift in Sources */,
 				18206F2B293CF59600ED1420 /* ReadingsList.swift in Sources */,
 				1837EC05294461110045CC4E /* FavoritesProviding.swift in Sources */,
 				18206EF3293CC13A00ED1420 /* SensorReaderApp.swift in Sources */,
+				1865ACA12966CC2E004BF767 /* ReadingsView.swift in Sources */,
 				1837EBFB294369BD0045CC4E /* DashboardViewModel.swift in Sources */,
+				1865AC97295F7522004BF767 /* ReadingsListcell.swift in Sources */,
 				1837EBFE29436BA00045CC4E /* Preview+Mocks.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -496,6 +530,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1865AC9E29658791004BF767 /* ReadingsFeatureTests.swift in Sources */,
+				18CD7F6B295DFBA400DEE5E8 /* ReadingModelTests.swift in Sources */,
 				186C774F29473FA00076AE14 /* Recorder.swift in Sources */,
 				18C1F8C829424B5200ACCF4B /* MockSensorReader.swift in Sources */,
 				1837EC0B294465670045CC4E /* MockPersistenceStore.swift in Sources */,
@@ -921,6 +957,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		1865AC98296578B7004BF767 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1865AC99296578B7004BF767 /* ComposableArchitecture */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1865AC98296578B7004BF767 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
+			productName = ComposableArchitecture;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 18206EE7293CC13A00ED1420 /* Project object */;
 }

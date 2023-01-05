@@ -6,6 +6,7 @@
 //
 
 import Combine
+import ComposableArchitecture
 import SensorReaderKit
 
 // MARK: DI for ReadingsUseCase
@@ -111,6 +112,52 @@ extension ReadingsUseCase {
             self.name = reading.name
             self.value = reading.value
             self.unit = reading.unit
+        }
+    }
+}
+
+extension DependencyValues {
+    var readingsProvider: () async throws -> [any SensorReading] {
+        get { self[ReadingsProviderKey.self] }
+        set { self[ReadingsProviderKey.self] = newValue }
+    }
+
+
+}
+
+private enum ReadingsProviderKey: DependencyKey {
+    static var liveValue: () async throws -> [any SensorReading] {
+        let config = URLSessionConfiguration.ephemeral
+        config.timeoutIntervalForRequest = 5
+        config.timeoutIntervalForResource = 5
+        let session = URLSession(configuration: config)
+        guard let url = URL(string: "http://192.168.2.159:45678") else {
+            fatalError("url could not be constructed")
+        }
+        return SensorReader(session, url: url).readings
+    }
+
+    static var previewValue: () async throws -> [any SensorReading] {
+        {
+            struct Reading: SensorReading {
+                var sensorClass: String
+                var name: String
+                var value: String
+                var unit: String
+                var updateTime: Date
+            }
+            return [
+                Reading(sensorClass: "Preview",
+                        name: "Sensor 1",
+                        value: "20.0123",
+                        unit: "C",
+                        updateTime: Date()),
+                Reading(sensorClass: "Preview",
+                        name: "Sensor 2",
+                        value: "0.15",
+                        unit: "%",
+                        updateTime: Date())
+            ]
         }
     }
 }

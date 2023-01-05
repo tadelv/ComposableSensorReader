@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ReadingModel: Identifiable {
+struct ReadingModel: Identifiable, Equatable {
     let id: String
     let device: String
     let name: String
