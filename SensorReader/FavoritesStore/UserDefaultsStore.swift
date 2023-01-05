@@ -10,7 +10,7 @@ import Foundation
 struct UserDefaultsStore: PersistenceProviding {
     typealias Content = [FavoriteModel]
     private static var contentKey = "sensorReader.persistence"
-    func store(_ value: Content?) throws {
+    func store(_ value: Content?) async throws {
         let values = value?.map { $0.id } ?? []
         UserDefaults.standard.setValue(values, forKey: Self.contentKey)
     }

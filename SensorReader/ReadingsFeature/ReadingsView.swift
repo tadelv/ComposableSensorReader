@@ -9,49 +9,40 @@ import ComposableArchitecture
 import SwiftUI
 
 struct ReadingsView: View {
-    let store: StoreOf<ReadingsFeature>
+    let store: StoreOf<ComposedFeature>
 
     var body: some View {
         WithViewStore(store) { viewStore in
             ZStack {
                 List {
-                    ForEach(viewStore.state.readings) { reading in
-                        ReadingsListCell(reading: reading)
-//                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-//                                Button {
-//                                    viewModel.toggleFavorite(reading)
-//                                } label: {
-//                                    VStack {
-//                                        Image(systemName: viewModel.isFavorite(reading) ? "star" : "circle")
-//                                        Text("Favorite")
-//                                    }
-//                                }
-//
-//                            }
+                    ForEach(viewStore.readings.readings) { reading in
+                        ReadingsListItem(reading: reading,
+                                         store: store.scope(state: \.favorites,
+                                                            action: ComposedFeature.Action.favorites))
                     }
                 }
-                if viewStore.state.loading {
+                if viewStore.readings.loading {
                     VStack {
                         ProgressView()
                         Text("Loading")
                             .background(Color(UIColor.systemBackground))
                     }
                 }
-                if let errMessage = viewStore.state.errorMessage {
+                if let errMessage = viewStore.readings.errorMessage {
                     let message = "Failed with: \(errMessage)"
                     Text(message)
                         .background(Color(UIColor.systemBackground))
                 }
             }
             .onAppear {
-                viewStore.send(.reload)
+                viewStore.send(.readings(.reload))
             }
             .onDisappear {
-                viewStore.send(.dismantle)
+                viewStore.send(.readings(.dismantle))
             }
             .toolbar {
                 Button {
-                    viewStore.send(.reload)
+                    viewStore.send(.readings(.reload))
                 } label: {
                     Image(systemName: "arrow.clockwise")
                 }
@@ -64,9 +55,11 @@ struct ReadingsView: View {
 
 struct ReadingsView_Previews: PreviewProvider {
     static var previews: some View {
-        ReadingsView(store:
-                        Store(initialState: ReadingsFeature.State(),
-                              reducer: ReadingsFeature())
-        )
+        NavigationView {
+            ReadingsView(store:
+                            Store(initialState: ComposedFeature.State(),
+                                  reducer: ComposedFeature())
+            )
+        }
     }
 }

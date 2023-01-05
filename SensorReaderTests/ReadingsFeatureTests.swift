@@ -25,10 +25,6 @@ final class ReadingsFeatureTests: XCTestCase {
         let store = TestStore(initialState: ReadingsFeature.State(),
                               reducer: ReadingsFeature())
 
-        store.dependencies.readingsProvider = {
-            []
-        }
-
         await store.send(.errorReceived("test")) {
             $0.errorMessage = "test"
         }
@@ -65,6 +61,7 @@ final class ReadingsFeatureTests: XCTestCase {
 
         await store.send(.reload) {
             $0.loading = true
+            $0.connectionCount = 1
         }
         await store.receive(.readingsFetched([.init(id: "aab", device: "a", name: "a", value: "ab")])) {
             $0.loading = false
@@ -89,7 +86,9 @@ final class ReadingsFeatureTests: XCTestCase {
                 .init(id: "cab", device: "c", name: "a", value: "ab")
             ]
         }
-        await store.send(.dismantle)
+        await store.send(.dismantle) {
+            $0.connectionCount = 0
+        }
     }
 
     func testReceivesDataAndError() async {
@@ -107,6 +106,7 @@ final class ReadingsFeatureTests: XCTestCase {
 
         await store.send(.reload) {
             $0.loading = true
+            $0.connectionCount = 1
         }
         await store.receive(.readingsFetched([])) {
             $0.loading = false
@@ -129,6 +129,52 @@ final class ReadingsFeatureTests: XCTestCase {
             return []
         }
         await scheduler.advance(by: .seconds(5))
-        await store.send(.dismantle)
+        await store.send(.dismantle) {
+            $0.connectionCount = 0
+        }
+    }
+
+    func testAllowsOneOrMoreSubscribers() async {
+        let scheduler = DispatchQueue.test
+        let store = TestStore(initialState: ReadingsFeature.State(),
+                              reducer: ReadingsFeature()
+            .dependency(\.mainQueue, scheduler.eraseToAnyScheduler()))
+
+        let exp = expectation(description: "calls for readings three times")
+        exp.expectedFulfillmentCount = 3
+        let provider: () async throws -> [any SensorReading] = {
+            exp.fulfill()
+            return []
+        }
+        store.dependencies.readingsProvider = {
+            try await provider()
+        }
+        await store.send(.reload) {
+            $0.loading = true
+            $0.connectionCount = 1
+        }
+        await store.receive(.readingsFetched([])) {
+            $0.loading = false
+            $0.readings = []
+        }
+        await scheduler.advance(by: .seconds(1))
+        await store.send(.reload) {
+            $0.loading = false
+            $0.connectionCount = 2
+        }
+        await scheduler.advance(by: .seconds(4))
+        await store.receive(.readingsFetched([]))
+        await scheduler.advance(by: .seconds(4))
+        await store.send(.dismantle) {
+            $0.connectionCount = 1
+        }
+        await scheduler.advance(by: .seconds(1))
+        await store.receive(.readingsFetched([]))
+
+        await store.send(.dismantle) {
+            $0.connectionCount = 0
+        }
+        await scheduler.advance(by: .seconds(5))
+        waitForExpectations(timeout: 10)
     }
 }

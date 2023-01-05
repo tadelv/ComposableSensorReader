@@ -16,7 +16,7 @@ struct ReadingsFeature: ReducerProtocol {
         var readings: [ReadingModel] = []
         var loading = false
         var errorMessage: String?
-        var connection: AnyCancellable?
+        var connectionCount = 0
     }
 
     enum Action: Equatable {
@@ -39,6 +39,10 @@ struct ReadingsFeature: ReducerProtocol {
             state.readings = newReadings
             return .none
         case .reload:
+            state.connectionCount += 1
+            guard state.connectionCount == 1 else {
+                return .none
+            }
             state.loading = true
             return .run { send in
                 while true {
@@ -60,6 +64,10 @@ struct ReadingsFeature: ReducerProtocol {
             state.errorMessage = errorMessage
             return .none
         case .dismantle:
+            state.connectionCount -= 1
+            guard state.connectionCount == 0 else {
+                return .none
+            }
             return .cancel(id: ReloadID.self)
         }
     }

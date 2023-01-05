@@ -10,7 +10,7 @@ import Combine
 // MARK: UseCase DI
 protocol PersistenceProviding {
     associatedtype Content
-    func store(_ value: Content?) throws
+    func store(_ value: Content?) async throws
     func fetch() async throws -> Content?
 }
 
@@ -57,7 +57,7 @@ final class FavoritesUseCase<P: PersistenceProviding>: FavoritesProviding where 
 
     func add(_ favorite: FavoriteModel) async throws {
         let value = favoritesSubject.value + [favorite]
-        try store.store(value)
+        try await store.store(value)
         favoritesSubject.send(value)
     }
 
@@ -66,7 +66,7 @@ final class FavoritesUseCase<P: PersistenceProviding>: FavoritesProviding where 
         value.removeAll {
             $0 == favorite
         }
-        try store.store(value)
+        try await store.store(value)
         favoritesSubject.send(value)
     }
 }
