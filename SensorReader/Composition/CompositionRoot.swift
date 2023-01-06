@@ -35,15 +35,30 @@ struct CompositionRoot {
     }
 
     var composeApp: some View {
-        HomeView {
-            DashView(store: store)
-            .tabItem {
-                Image(systemName: "star")
+        WithViewStore(store) { viewStore in
+            HomeView {
+                NavigationView {
+                    DashView(store: store)
+
+                }
+                .tabItem {
+                    Image(systemName: "star")
+                }
+                NavigationView {
+                    ReadingsView(store: store)
+                }.tabItem {
+                    Image(systemName: "list.bullet")
+                }
             }
-            NavigationView {
-                ReadingsView(store: store)
-            }.tabItem {
-                Image(systemName: "list.bullet")
+            .onAppear {
+                viewStore.send(.appLaunch)
+            }
+            .sheet(isPresented: viewStore.binding(get: { state in
+                state.configSheetVisible
+            }, send: { value in
+                ComposedFeature.Action.configVisible(value)
+            })) {
+                SettingsView(store: store)
             }
         }
     }

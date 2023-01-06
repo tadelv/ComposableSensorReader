@@ -48,13 +48,22 @@ struct DashView: View {
                 viewStore.send(.favorites(.fetch))
                 viewStore.send(.readings(.reload))
             }
+            .toolbar {
+                Button {
+                    viewStore.send(.configVisible(true))
+                } label: {
+                    Image(systemName: "gearshape")
+                }
+            }
         }
     }
 }
 
 struct DashView_Previews: PreviewProvider {
     static var previews: some View {
-        DashView(store: Store(initialState: ComposedFeature.State(),
-                              reducer: ComposedFeature()))
+        NavigationView {
+            DashView(store: Store(initialState: ComposedFeature.State(),
+                                  reducer: ComposedFeature()))
+        }
     }
 }
