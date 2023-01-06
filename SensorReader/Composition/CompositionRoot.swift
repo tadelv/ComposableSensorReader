@@ -9,27 +9,35 @@ import ComposableArchitecture
 import SensorReaderKit
 import SwiftUI
 
+private var readingsProvider: () async throws -> [any SensorReading] = {
+    struct NotConfigured: LocalizedError {
+        var errorDescription: String? {
+            "Please set the Server URL first"
+        }
+    }
+    throw NotConfigured()
+}
+
 struct CompositionRoot {
-    let reader: SensorReader
     let favoritesStore = UserDefaultsStore()
     let store: StoreOf<ComposedFeature>
 
     init() {
-        let config = URLSessionConfiguration.ephemeral
-        config.timeoutIntervalForRequest = 5
-        config.timeoutIntervalForResource = 5
-        let session = URLSession(configuration: config)
-        guard let url = URL(string: "http://192.168.2.159:45678") else {
-            fatalError("url could not be constructed")
-        }
-        self.reader = SensorReader(session, url: url)
         let reducer = ComposedFeature()
-            .dependency(\.readingsProvider, self.reader.readings)
+            .dependency(\.readingsProvider, readingsProvider)
             .dependency(\.favoritesApi, .init(save: { [favoritesStore] values in
                 try await favoritesStore.store(values)
             }, load: { [favoritesStore] in
                 try await favoritesStore.fetch() ?? []
             }))
+            .dependency(\.configurationCall, { url in
+                let config = URLSessionConfiguration.ephemeral
+                config.timeoutIntervalForRequest = 5
+                config.timeoutIntervalForResource = 5
+                let session = URLSession(configuration: config)
+                let reader = SensorReader(session, url: url)
+                readingsProvider = reader.readings
+            })
         self.store = StoreOf<ComposedFeature>(initialState: ComposedFeature.State(),
                                               reducer: reducer)
     }
@@ -59,6 +67,7 @@ struct CompositionRoot {
                 ComposedFeature.Action.configVisible(value)
             })) {
                 SettingsView(store: store)
+                    .interactiveDismissDisabled(!viewStore.urlValid)
             }
         }
     }

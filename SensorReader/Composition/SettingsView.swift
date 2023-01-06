@@ -34,7 +34,9 @@ struct SettingsView: View {
                 }
                 Button("Done") {
                     viewStore.send(.configVisible(false))
-                }.disabled(viewStore.state.urlValid == false)
+                }
+                .frame(maxWidth: .infinity)
+                .disabled(viewStore.state.urlValid == false)
             }
 
         }
