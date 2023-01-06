@@ -163,6 +163,11 @@ private enum ReadingsProviderKey: DependencyKey {
                             name: "Sensor 2",
                             value: "0.15",
                             unit: "%",
+                            updateTime: Date()),
+                    Reading(sensorClass: "PreviewLongName",
+                            name: "Sensor 2LongName",
+                            value: "0.15",
+                            unit: "%",
                             updateTime: Date())
                 ]
             }()

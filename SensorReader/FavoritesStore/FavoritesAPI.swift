@@ -30,7 +30,8 @@ private enum FavoritesStoreAPIKey: DependencyKey {
 
     static var previewValue: FavoritesStoreAPI {
         var values: [FavoriteModel] = [
-            .init(id: "PreviewSensor 1C")
+            .init(id: "PreviewSensor 1C"),
+            .init(id: "PreviewLongNameSensor 2LongName%")
         ]
         return FavoritesStoreAPI { values = $0 } load: { values }
     }

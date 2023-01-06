@@ -31,9 +31,12 @@ struct DashView: View {
                             Text(reading.value)
                                 .font(.title)
                             Text(reading.name)
+                                .lineLimit(1)
                                 .font(.title2)
+                                .minimumScaleFactor(0.2)
                         }
                         .frame(maxWidth: .infinity)
+                        .frame(maxHeight: .infinity)
                         .padding()
                         .contentShape(Rectangle())
                         .overlay(
