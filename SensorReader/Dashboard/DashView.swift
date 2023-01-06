@@ -46,7 +46,7 @@ struct DashView: View {
             }
             .onAppear {
                 viewStore.send(.favorites(.fetch))
-                viewStore.send(.readings(.reload))
+                viewStore.send(.readings(.subscribe))
             }
             .toolbar {
                 Button {

@@ -65,8 +65,11 @@ struct ComposedFeature: ReducerProtocol {
                     return .configVisible(true)
                 }
             case .appConfigured(let url):
+                state.configUrl = url
                 configCall(url)
-                return .none
+                return .task {
+                    .readings(.reset)
+                }
             default:
                 return .none
             }
@@ -94,9 +97,12 @@ extension DependencyValues {
 private enum UrlStorageKey: DependencyKey {
     static var liveValue: StorageAPI<URL> {
         StorageAPI { key, value in
-            UserDefaults.standard.set(value, forKey: key)
+            UserDefaults.standard.set(value.absoluteString, forKey: key)
         } load: { key in
-            UserDefaults.standard.value(forKey: key) as? URL
+            guard let str = UserDefaults.standard.value(forKey: key) as? String else {
+                return nil
+            }
+            return URL(string: str)
         }
     }
 

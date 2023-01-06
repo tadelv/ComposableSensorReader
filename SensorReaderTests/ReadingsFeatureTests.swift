@@ -55,14 +55,15 @@ final class ReadingsFeatureTests: XCTestCase {
         let store = TestStore(initialState: ReadingsFeature.State(),
                               reducer: ReadingsFeature()
             .dependency(\.mainQueue, scheduler.eraseToAnyScheduler()))
-        store.dependencies.readingsProvider = {
+        store.dependencies.readingsProvider = ReadingsAPI {
             try await provider()
         }
 
-        await store.send(.reload) {
+        await store.send(.subscribe) {
             $0.loading = true
             $0.connectionCount = 1
         }
+        await store.receive(.scheduleLoad)
         await store.receive(.readingsFetched([.init(id: "aab", device: "a", name: "a", value: "ab")])) {
             $0.loading = false
             $0.readings = [
@@ -86,7 +87,7 @@ final class ReadingsFeatureTests: XCTestCase {
                 .init(id: "cab", device: "c", name: "a", value: "ab")
             ]
         }
-        await store.send(.dismantle) {
+        await store.send(.unsubscribe) {
             $0.connectionCount = 0
         }
     }
@@ -100,14 +101,15 @@ final class ReadingsFeatureTests: XCTestCase {
         var provider: () async throws -> [any SensorReading] = {
             []
         }
-        store.dependencies.readingsProvider = {
+        store.dependencies.readingsProvider = ReadingsAPI {
             try await provider()
         }
 
-        await store.send(.reload) {
+        await store.send(.subscribe) {
             $0.loading = true
             $0.connectionCount = 1
         }
+        await store.receive(.scheduleLoad)
         await store.receive(.readingsFetched([])) {
             $0.loading = false
             $0.readings = []
@@ -129,7 +131,7 @@ final class ReadingsFeatureTests: XCTestCase {
             return []
         }
         await scheduler.advance(by: .seconds(5))
-        await store.send(.dismantle) {
+        await store.send(.unsubscribe) {
             $0.connectionCount = 0
         }
     }
@@ -146,32 +148,33 @@ final class ReadingsFeatureTests: XCTestCase {
             exp.fulfill()
             return []
         }
-        store.dependencies.readingsProvider = {
+        store.dependencies.readingsProvider = ReadingsAPI {
             try await provider()
         }
-        await store.send(.reload) {
+        await store.send(.subscribe) {
             $0.loading = true
             $0.connectionCount = 1
         }
+        await store.receive(.scheduleLoad)
         await store.receive(.readingsFetched([])) {
             $0.loading = false
             $0.readings = []
         }
         await scheduler.advance(by: .seconds(1))
-        await store.send(.reload) {
+        await store.send(.subscribe) {
             $0.loading = false
             $0.connectionCount = 2
         }
         await scheduler.advance(by: .seconds(4))
         await store.receive(.readingsFetched([]))
         await scheduler.advance(by: .seconds(4))
-        await store.send(.dismantle) {
+        await store.send(.unsubscribe) {
             $0.connectionCount = 1
         }
         await scheduler.advance(by: .seconds(1))
         await store.receive(.readingsFetched([]))
 
-        await store.send(.dismantle) {
+        await store.send(.unsubscribe) {
             $0.connectionCount = 0
         }
         await scheduler.advance(by: .seconds(5))

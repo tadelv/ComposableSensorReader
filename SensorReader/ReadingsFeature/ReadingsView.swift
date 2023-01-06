@@ -36,14 +36,14 @@ struct ReadingsView: View {
                 }
             }
             .onAppear {
-                viewStore.send(.readings(.reload))
+                viewStore.send(.readings(.subscribe))
             }
             .onDisappear {
-                viewStore.send(.readings(.dismantle))
+                viewStore.send(.readings(.unsubscribe))
             }
             .toolbar {
                 Button {
-                    viewStore.send(.readings(.reload))
+                    viewStore.send(.readings(.reset))
                 } label: {
                     Image(systemName: "arrow.clockwise")
                 }

@@ -9,37 +9,52 @@ import ComposableArchitecture
 import SensorReaderKit
 import SwiftUI
 
-private var readingsProvider: () async throws -> [any SensorReading] = {
-    struct NotConfigured: LocalizedError {
-        var errorDescription: String? {
-            "Please set the Server URL first"
+struct ConfigurationWrapper {
+    var configCall: (URL) -> Void = { _ in }
+}
+
+private class ApiWrapper {
+    var readingsCall: () async throws -> [SensorReading] = {
+        struct NotConfigured: LocalizedError {
+            var errorDescription: String? {
+                "Please set the Server URL first"
+            }
         }
+        throw NotConfigured()
     }
-    throw NotConfigured()
+    lazy var readingsApi = ReadingsAPI { [unowned self] in
+        try await readingsCall()
+    }
 }
 
 struct CompositionRoot {
     let favoritesStore = UserDefaultsStore()
     let store: StoreOf<ComposedFeature>
+    private let apiWrapper = ApiWrapper()
+    var configurationWrapper = ConfigurationWrapper()
 
     init() {
+        configurationWrapper.configCall = { [apiWrapper] url in
+            let config = URLSessionConfiguration.ephemeral
+            config.timeoutIntervalForRequest = 5
+            config.timeoutIntervalForResource = 5
+            let session = URLSession(configuration: config)
+            let reader = SensorReader(session, url: url)
+            apiWrapper.readingsCall = {
+                try await reader.readings()
+            }
+        }
         let reducer = ComposedFeature()
-            .dependency(\.readingsProvider, readingsProvider)
+            .dependency(\.readingsProvider, apiWrapper.readingsApi)
             .dependency(\.favoritesApi, .init(save: { [favoritesStore] values in
                 try await favoritesStore.store(values)
             }, load: { [favoritesStore] in
                 try await favoritesStore.fetch() ?? []
             }))
-            .dependency(\.configurationCall, { url in
-                let config = URLSessionConfiguration.ephemeral
-                config.timeoutIntervalForRequest = 5
-                config.timeoutIntervalForResource = 5
-                let session = URLSession(configuration: config)
-                let reader = SensorReader(session, url: url)
-                readingsProvider = reader.readings
-            })
+            .dependency(\.configurationCall, configurationWrapper.configCall)
         self.store = StoreOf<ComposedFeature>(initialState: ComposedFeature.State(),
                                               reducer: reducer)
+
     }
 
     var composeApp: some View {
@@ -47,7 +62,6 @@ struct CompositionRoot {
             HomeView {
                 NavigationView {
                     DashView(store: store)
-
                 }
                 .tabItem {
                     Image(systemName: "star")

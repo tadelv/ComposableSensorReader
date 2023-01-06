@@ -116,8 +116,12 @@ extension ReadingsUseCase {
     }
 }
 
+struct ReadingsAPI {
+    var readings: () async throws -> [any SensorReading]
+}
+
 extension DependencyValues {
-    var readingsProvider: () async throws -> [any SensorReading] {
+    var readingsProvider: ReadingsAPI {
         get { self[ReadingsProviderKey.self] }
         set { self[ReadingsProviderKey.self] = newValue }
     }
@@ -126,7 +130,7 @@ extension DependencyValues {
 }
 
 private enum ReadingsProviderKey: DependencyKey {
-    static var liveValue: () async throws -> [any SensorReading] {
+    static var liveValue: ReadingsAPI {
         let config = URLSessionConfiguration.ephemeral
         config.timeoutIntervalForRequest = 5
         config.timeoutIntervalForResource = 5
@@ -134,30 +138,34 @@ private enum ReadingsProviderKey: DependencyKey {
         guard let url = URL(string: "http://192.168.2.159:45678") else {
             fatalError("url could not be constructed")
         }
-        return SensorReader(session, url: url).readings
+        return .init {
+            try await SensorReader(session, url: url).readings()
+        }
     }
 
-    static var previewValue: () async throws -> [any SensorReading] {
-        {
-            struct Reading: SensorReading {
-                var sensorClass: String
-                var name: String
-                var value: String
-                var unit: String
-                var updateTime: Date
-            }
-            return [
-                Reading(sensorClass: "Preview",
-                        name: "Sensor 1",
-                        value: "20.0123",
-                        unit: "C",
-                        updateTime: Date()),
-                Reading(sensorClass: "Preview",
-                        name: "Sensor 2",
-                        value: "0.15",
-                        unit: "%",
-                        updateTime: Date())
-            ]
+    static var previewValue: ReadingsAPI {
+        .init {
+            {
+                struct Reading: SensorReading {
+                    var sensorClass: String
+                    var name: String
+                    var value: String
+                    var unit: String
+                    var updateTime: Date
+                }
+                return [
+                    Reading(sensorClass: "Preview",
+                            name: "Sensor 1",
+                            value: "20.0123",
+                            unit: "C",
+                            updateTime: Date()),
+                    Reading(sensorClass: "Preview",
+                            name: "Sensor 2",
+                            value: "0.15",
+                            unit: "%",
+                            updateTime: Date())
+                ]
+            }()
         }
     }
 }

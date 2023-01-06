@@ -33,10 +33,12 @@ struct ReadingsFeature: ReducerProtocol {
 
     enum Action: Equatable {
         case readingsFetched([ReadingModel])
-        case reload
+        case subscribe
         case errorReceived(String)
-        case dismantle
+        case unsubscribe
         case searchTextChanged(String)
+        case reset
+        case scheduleLoad
     }
 
     @Dependency(\.readingsProvider) var readingsProvider
@@ -54,15 +56,19 @@ struct ReadingsFeature: ReducerProtocol {
             state.errorMessage = nil
             state.readings = newReadings
             return .none
-        case .reload:
+        case .subscribe:
             state.connectionCount += 1
             guard state.connectionCount == 1 else {
                 return .none
             }
             state.loading = true
+            return .task {
+                .scheduleLoad
+            }
+        case .scheduleLoad:
             return .run { send in
                 while true {
-                    let readings = try await readingsProvider()
+                    let readings = try await readingsProvider.readings()
                     await send(.readingsFetched(readings.map {
                         ReadingModel(id: $0.sensorClass + $0.name + $0.unit,
                                      device: $0.sensorClass,
@@ -79,12 +85,17 @@ struct ReadingsFeature: ReducerProtocol {
         case .errorReceived(let errorMessage):
             state.errorMessage = errorMessage
             return .none
-        case .dismantle:
+        case .unsubscribe:
             state.connectionCount -= 1
             guard state.connectionCount == 0 else {
                 return .none
             }
             return .cancel(id: ReloadID.self)
+        case .reset:
+            state.errorMessage = nil
+            return .task {
+                .scheduleLoad
+            }
         }
     }
 }
