@@ -7,6 +7,12 @@
 
 import Foundation
 
+protocol PersistenceProviding {
+    associatedtype Content
+    func store(_ value: Content?) async throws
+    func fetch() async throws -> Content?
+}
+
 struct UserDefaultsStore: PersistenceProviding {
     typealias Content = [FavoriteModel]
     private static var contentKey = "sensorReader.persistence"

@@ -7,6 +7,10 @@
 
 import ComposableArchitecture
 
+struct FavoriteModel: Equatable {
+    let id: String
+}
+
 struct FavoritesFeature: ReducerProtocol {
     struct State: Equatable {
         var favorites: [FavoriteModel] = []

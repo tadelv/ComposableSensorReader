@@ -29,7 +29,9 @@ struct DashView: View {
                     ForEach(favoriteReadings) { reading in
                         VStack {
                             Text(reading.value)
+                                .lineLimit(1)
                                 .font(.title)
+                                .minimumScaleFactor(0.2)
                             Text(reading.name)
                                 .lineLimit(1)
                                 .font(.title2)

@@ -5,6 +5,7 @@
 //  Created by Vid Tadel on 12/4/22.
 //
 
+import ComposableArchitecture
 import SwiftUI
 
 struct HomeView<Content: View>: View {
@@ -22,21 +23,13 @@ struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
         HomeView {
             NavigationView {
-                ReadingsList(
-                    viewModel: ReadingsListViewModel(
-                        provider: Self.mockReadingsProvider,
-                        favorites: Self.mockFavoritesProvider
-                    )
-                )
+                ReadingsView(store: Store(initialState: ComposedFeature.State(),
+                                          reducer: ComposedFeature()))
             }
             .navigationViewStyle(.stack)
             .tabItem {
                 Text("All")
             }
-            Text("Hello")
-                .tabItem {
-                    Text("burek")
-                }
         }
     }
 }
