@@ -10,29 +10,30 @@ import SwiftUI
 
 struct ReadingsView: View {
     let store: StoreOf<ComposedFeature>
-    @State private var searchText = ""
 
     var body: some View {
-        WithViewStore(store) { viewStore in
+        WithViewStore(store, observe: {
+            $0.readings
+        }) { viewStore in
             ZStack {
                 List {
-                    ForEach(viewStore.readings.searchResults) { reading in
+                    ForEach(viewStore.searchResults) { reading in
                         ReadingsListItem(reading: reading,
                                          store: store.scope(state: \.favorites,
                                                             action: ComposedFeature.Action.favorites))
                     }
                 }
-                if viewStore.readings.loading {
+                if viewStore.loading {
                     VStack {
                         ProgressView()
                         Text("Loading")
                             .background(Color(UIColor.systemBackground))
                     }
                 }
-                if let errMessage = viewStore.readings.errorMessage {
-                    let message = "Failed with: \(errMessage)"
-                    Text(message)
-                        .background(Color(UIColor.systemBackground))
+                IfLetStore(store.scope(state: \.readings.errorMessage)) {
+                    WithViewStore($0) { viewStore in
+                        Text("Failed with: " + viewStore.state)
+                    }
                 }
             }
             .onAppear {
@@ -50,10 +51,9 @@ struct ReadingsView: View {
 
             }
             .navigationTitle("List")
-            .searchable(text: viewStore.binding(get: { state in
-                state.readings.searchText
-            }, send: { value in
-                ComposedFeature.Action.readings(.searchTextChanged(value))
+            .searchable(text: viewStore.binding(get: \.searchText,
+                                                send: {
+                ComposedFeature.Action.readings(.searchTextChanged($0))
             }))
         }
     }
@@ -100,6 +100,16 @@ struct ReadingsView_Previews: PreviewProvider {
             ReadingsView(store:
                             Store(initialState: ComposedFeature.State(),
                                   reducer: ComposedFeature())
+            )
+        }
+        NavigationView {
+            ReadingsView(store:
+                            Store(initialState: ComposedFeature.State(),
+                                  reducer: ComposedFeature()
+                                .dependency(\.readingsProvider, .init(readings: {
+                                    struct E1: Error {}
+                                    throw E1()
+                                })))
             )
         }
     }
