@@ -83,6 +83,7 @@ struct ReadingsFeature: ReducerProtocol {
             }
             .cancellable(id: ReloadID.self)
         case .errorReceived(let errorMessage):
+            state.loading = false
             state.errorMessage = errorMessage
             return .none
         case .unsubscribe:

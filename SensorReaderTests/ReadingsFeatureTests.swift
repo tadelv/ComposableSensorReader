@@ -92,6 +92,31 @@ final class ReadingsFeatureTests: XCTestCase {
         }
     }
 
+    func testReceivesError() async {
+        struct E1: LocalizedError {
+            var errorDescription: String? {
+                "Test"
+            }
+        }
+
+        let store = TestStore(initialState: ReadingsFeature.State(),
+                              reducer: ReadingsFeature())
+
+        store.dependencies.readingsProvider = .init(readings: {
+            throw E1()
+        })
+
+        await store.send(.subscribe) {
+            $0.loading = true
+            $0.connectionCount = 1
+        }
+        await store.receive(.scheduleLoad)
+        await store.receive(.errorReceived("Test")) {
+            $0.loading = false
+            $0.errorMessage = "Test"
+        }
+    }
+
     func testReceivesDataAndError() async {
         let scheduler = DispatchQueue.test
         let store = TestStore(initialState: ReadingsFeature.State(),
