@@ -167,10 +167,9 @@ final class ReadingsFeatureTests: XCTestCase {
                               reducer: ReadingsFeature()
             .dependency(\.mainQueue, scheduler.eraseToAnyScheduler()))
 
-        let exp = expectation(description: "calls for readings three times")
-        exp.expectedFulfillmentCount = 3
+        var callCount = 0
         let provider: () async throws -> [any SensorReading] = {
-            exp.fulfill()
+            callCount += 1
             return []
         }
         store.dependencies.readingsProvider = ReadingsAPI {
@@ -203,6 +202,6 @@ final class ReadingsFeatureTests: XCTestCase {
             $0.connectionCount = 0
         }
         await scheduler.advance(by: .seconds(5))
-        waitForExpectations(timeout: 10)
+        XCTAssertEqual(callCount, 3)
     }
 }
