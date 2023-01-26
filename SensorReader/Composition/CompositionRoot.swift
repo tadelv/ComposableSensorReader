@@ -10,10 +10,10 @@ import SensorReaderKit
 import SwiftUI
 
 struct ConfigurationWrapper {
-    var configCall: (URL) -> Void = { _ in }
+    var configCall: @Sendable (URL) -> Void = { _ in }
 }
 
-private class ApiWrapper {
+private class ApiWrapper: @unchecked Sendable {
     var readingsCall: () async throws -> [SensorReading] = {
         struct NotConfigured: LocalizedError {
             var errorDescription: String? {
@@ -57,6 +57,7 @@ struct CompositionRoot {
 
     }
 
+	@MainActor
     var composeApp: some View {
         WithViewStore(store) { viewStore in
             HomeView {

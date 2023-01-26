@@ -9,7 +9,7 @@ import ComposableArchitecture
 import SensorReaderKit
 
 struct ReadingsAPI {
-    var readings: () async throws -> [any SensorReading]
+    var readings: @Sendable () async throws -> [any SensorReading]
 }
 
 extension DependencyValues {
@@ -56,4 +56,8 @@ private enum ReadingsProviderKey: DependencyKey {
             }()
         }
     }
+
+	static var testValue: ReadingsAPI {
+		ReadingsAPI { [] }
+	}
 }

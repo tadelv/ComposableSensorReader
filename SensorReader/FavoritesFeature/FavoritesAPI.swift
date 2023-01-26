@@ -8,8 +8,8 @@
 import ComposableArchitecture
 
 struct FavoritesStoreAPI {
-    var save: ([FavoriteModel]) async throws -> Void
-    var load: () async throws -> [FavoriteModel]
+    var save: @Sendable ([FavoriteModel]) async throws -> Void
+    var load: @Sendable () async throws -> [FavoriteModel]
 }
 
 extension DependencyValues {
@@ -29,15 +29,23 @@ private enum FavoritesStoreAPIKey: DependencyKey {
     }
 
     static var previewValue: FavoritesStoreAPI {
-        var values: [FavoriteModel] = [
+		let store: LockIsolated<[FavoriteModel]> = .init([
             .init(id: "PreviewSensor 1C"),
             .init(id: "PreviewLongNameSensor 2LongName%")
-        ]
-        return FavoritesStoreAPI { values = $0 } load: { values }
+        ])
+        return FavoritesStoreAPI {
+			store.setValue($0)
+		} load: {
+			store.value
+		}
     }
 
     static var testValue: FavoritesStoreAPI {
-        var values: [FavoriteModel] = []
-        return FavoritesStoreAPI { values = $0 } load: { values }
+		let store: LockIsolated<[FavoriteModel]> = .init([])
+		return FavoritesStoreAPI {
+			store.setValue($0)
+		} load: {
+			store.value
+		}
     }
 }

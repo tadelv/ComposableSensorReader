@@ -19,6 +19,13 @@ struct MockReading: SensorReading {
     var updateTime: Date
 }
 
+final class ProviderHelper {
+	@MainActor
+	var provider: @Sendable () async throws -> [any SensorReading] = {
+		[]
+	}
+}
+
 @MainActor
 final class ReadingsFeatureTests: XCTestCase {
     func testErrorReducer() async {
@@ -43,7 +50,8 @@ final class ReadingsFeatureTests: XCTestCase {
 
     func testReducerReceivesData() async {
         let scheduler = DispatchQueue.test
-        var provider: () async throws -> [any SensorReading] = {
+        let helper = ProviderHelper()
+		helper.provider = {
             [
                 MockReading(sensorClass: "a",
                             name: "a",
@@ -56,7 +64,7 @@ final class ReadingsFeatureTests: XCTestCase {
                               reducer: ReadingsFeature()
             .dependency(\.mainQueue, scheduler.eraseToAnyScheduler()))
         store.dependencies.readingsProvider = ReadingsAPI {
-            try await provider()
+			try await helper.provider()
         }
 
         await store.send(.subscribe) {
@@ -71,7 +79,7 @@ final class ReadingsFeatureTests: XCTestCase {
             ]
         }
 //        store.dependencies.readingsProvider = {
-        provider = {
+		helper.provider = {
             [
                 MockReading(sensorClass: "c",
                             name: "a",
@@ -123,11 +131,10 @@ final class ReadingsFeatureTests: XCTestCase {
                               reducer: ReadingsFeature()
             .dependency(\.mainQueue, scheduler.eraseToAnyScheduler()))
 
-        var provider: () async throws -> [any SensorReading] = {
-            []
-        }
+		let helper = ProviderHelper()
+
         store.dependencies.readingsProvider = ReadingsAPI {
-            try await provider()
+			try await helper.provider()
         }
 
         await store.send(.subscribe) {
@@ -144,14 +151,14 @@ final class ReadingsFeatureTests: XCTestCase {
                 "test"
             }
         }
-        provider = {
+		helper.provider = {
             throw TestError()
         }
         await scheduler.advance(by: .seconds(5))
         await store.receive(.errorReceived("test")) {
             $0.errorMessage = "test"
         }
-        provider = {
+		helper.provider = {
             XCTFail("should not get called again")
             return []
         }

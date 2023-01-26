@@ -7,6 +7,7 @@
 
 import Foundation
 import ComposableArchitecture
+import XCTestDynamicOverlay
 
 struct ComposedFeature: ReducerProtocol {
     struct State: Equatable {
@@ -78,8 +79,8 @@ struct ComposedFeature: ReducerProtocol {
 }
 
 struct StorageAPI<T: Any> {
-    var store: (String, T) -> Void
-    var load: (String) -> T?
+    var store: @Sendable (String, T) -> Void
+    var load: @Sendable (String) -> T?
 }
 
 extension DependencyValues {
@@ -88,7 +89,7 @@ extension DependencyValues {
         set { self[UrlStorageKey.self] = newValue }
     }
 
-    var configurationCall: (URL) -> Void {
+    var configurationCall: @Sendable (URL) -> Void {
         get { self[ConfigureCallKey.self] }
         set { self[ConfigureCallKey.self] = newValue }
     }
@@ -107,18 +108,18 @@ private enum UrlStorageKey: DependencyKey {
     }
 
     static var previewValue: StorageAPI<URL> {
-        var store: [String: URL] = [:]
-        return StorageAPI { key, val in
-            store[key] = val
-        } load: { key in
-            store[key]
+		let store: LockIsolated<[String: URL]> = .init([:])
+        return StorageAPI { [unowned store] key, val in
+			store.withValue { value in
+				value[key] = val
+			}
+        } load: { [unowned store] key in
+            store.value[key]
         }
 
     }
 }
 
 private enum ConfigureCallKey: DependencyKey {
-    static var liveValue: (URL) -> Void {
-        { _ in }
-    }
+	static var liveValue: @Sendable (URL) -> Void = unimplemented("ConfigureCallKey")
 }
